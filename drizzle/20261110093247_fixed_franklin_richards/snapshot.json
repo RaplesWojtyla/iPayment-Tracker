@@ -1,0 +1,39 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "9a0ede70-d4ca-4816-a1d9-54fbbbd4e970",
+  "prevIds": [
+    "00233630-7832-4796-8543-a8b7fd47af01"
+  ],
+  "footprints": [
+    {
+      "statementType": "rename_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "user",
+        "aktif"
+      ],
+      "writes": [
+        "s|col|public.user.aktif",
+        "n|col|public.user.aktif",
+        "s|col|public.user.active",
+        "n|col|public.user.active"
+      ],
+      "reads": [
+        "n|tbl|public.user",
+        "n|sch|public"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "rename",
+      "key": "columns\u0000[\"public\",\"user\",\"aktif\"]",
+      "set": {
+        "name": "active"
+      }
+    }
+  ]
+}
