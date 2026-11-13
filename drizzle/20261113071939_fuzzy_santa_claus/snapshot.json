@@ -1,0 +1,92 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "137903db-9678-4e05-a174-7ac54b59e4cc",
+  "prevIds": [
+    "7d9047f5-1e10-4e1b-983d-738779c57851"
+  ],
+  "footprints": [
+    {
+      "statementType": "drop_check",
+      "statementTarget": [
+        "table",
+        "public",
+        "invoices"
+      ],
+      "writes": [
+        "s|ck|public.invoices.invoices_jumlah_tagihan_non_negative_chk",
+        "n|ck|public.invoices.invoices_jumlah_tagihan_non_negative_chk",
+        "e|ck|public.invoices.invoices_jumlah_tagihan_non_negative_chk",
+        "n|con|public.invoices.invoices_jumlah_tagihan_non_negative_chk"
+      ],
+      "reads": [
+        "n|tbl|public.invoices",
+        "n|sch|public",
+        "e|col|public.invoices.jumlah_tagihan"
+      ]
+    },
+    {
+      "statementType": "recreate_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "invoices",
+        "invoices_belum_bayar_arrears_idx"
+      ],
+      "writes": [
+        "s|idx|public.invoices_belum_bayar_arrears_idx",
+        "n|idx|public.invoices_belum_bayar_arrears_idx",
+        "e|idx|public.invoices_belum_bayar_arrears_idx",
+        "n|rel|public.invoices_belum_bayar_arrears_idx"
+      ],
+      "reads": [
+        "n|tbl|public.invoices",
+        "n|sch|public",
+        "n|col|public.invoices.belum_bayar"
+      ],
+      "sharedWrites": [],
+      "sqlHash": "03e89ff031c66323"
+    },
+    {
+      "statementType": "alter_check",
+      "statementTarget": [
+        "table",
+        "public",
+        "invoices"
+      ],
+      "writes": [
+        "s|ck|public.invoices.invoices_belum_bayar_range_chk"
+      ],
+      "reads": [
+        "n|tbl|public.invoices",
+        "n|sch|public",
+        "n|col|public.invoices.belum_bayar",
+        "n|col|public.invoices.jumlah_tagihan",
+        "e|col|public.invoices.belum_bayar",
+        "e|col|public.invoices.jumlah_tagihan"
+      ],
+      "sqlHash": "51b5e527d1315480"
+    }
+  ],
+  "deltas": [
+    {
+      "op": "drop",
+      "key": "checks\u0000[\"public\",\"invoices\",\"invoices_jumlah_tagihan_non_negative_chk\"]"
+    },
+    {
+      "op": "alter",
+      "key": "indexes\u0000[\"public\",\"invoices_belum_bayar_arrears_idx\"]",
+      "set": {
+        "where": "abs(\"belum_bayar\") > 0"
+      }
+    },
+    {
+      "op": "alter",
+      "key": "checks\u0000[\"public\",\"invoices\",\"invoices_belum_bayar_range_chk\"]",
+      "set": {
+        "value": "abs(\"belum_bayar\") <= abs(\"jumlah_tagihan\")"
+      }
+    }
+  ]
+}

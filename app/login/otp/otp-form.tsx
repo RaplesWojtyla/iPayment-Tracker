@@ -1,14 +1,18 @@
 "use client";
 
-import { authClient } from "@/lib/auth-client";
-import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { AlertCircleIcon } from "lucide-react";
+import { authClient } from "@/lib/auth-client";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { Spinner } from "@/components/ui/spinner";
 
 const COOLDOWN = 60;
 const RESEND_LABEL = "Kirim ulang kode";
 
 export function OtpForm() {
-    const router = useRouter();
     const [code, setCode] = useState("");
     const [error, setError] = useState<string | null>(null);
     const [pending, setPending] = useState(false);
@@ -45,38 +49,61 @@ export function OtpForm() {
             setError(error.message ?? "Kode OTP salah.");
             return;
         }
-        router.replace("/");
+        window.location.replace("/");
     };
 
     return (
-        <form onSubmit={onSubmit} className="flex flex-col gap-3">
-            <input
-                inputMode="numeric"
-                autoComplete="one-time-code"
-                maxLength={6}
-                required
-                autoFocus
-                placeholder="Kode 6 digit"
-                value={code}
-                onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
-                className="rounded border px-3 py-2 tracking-[0.3em]"
-            />
-            {error && <p className="text-sm text-red-600">{error}</p>}
-            <button
-                type="submit"
-                disabled={pending || code.length < 6}
-                className={`rounded bg-black px-3 py-2 text-white ${cooldown == 0 ? "cursor-pointer" : ""}`}
-            >
-                {pending ? "Memverifikasi…" : "Verifikasi"}
-            </button>
-            <button
-                type="button"
-                disabled={cooldown > 0}
-                onClick={send}
-                className={`text-sm underline disabled:opacity-50 ${cooldown == 0 ? "cursor-pointer" : ""}`}
-            >
-                {cooldown > 0 ? `${RESEND_LABEL} (${cooldown}s)` : RESEND_LABEL}
-            </button>
+        <form onSubmit={onSubmit}>
+            <FieldGroup>
+                <Field>
+                    <FieldLabel htmlFor="otp-code">Kode Verifikasi</FieldLabel>
+                    <Input
+                        id="otp-code"
+                        inputMode="numeric"
+                        autoComplete="one-time-code"
+                        maxLength={6}
+                        required
+                        autoFocus
+                        placeholder="000000"
+                        value={code}
+                        onChange={(e) =>
+                            setCode(e.target.value.replace(/\D/g, ""))
+                        }
+                        className="text-center font-mono text-base tracking-[0.35em]"
+                    />
+                </Field>
+
+                {error && (
+                    <Alert variant="destructive">
+                        <AlertCircleIcon />
+                        <AlertDescription>{error}</AlertDescription>
+                    </Alert>
+                )}
+
+                <div className="flex flex-col gap-2">
+                    <Button
+                        type="submit"
+                        disabled={pending || code.length < 6}
+                        className="w-full"
+                    >
+                        {pending && <Spinner data-icon="inline-start" />}
+                        {pending ? "Memverifikasi…" : "Verifikasi"}
+                    </Button>
+
+                    <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        disabled={cooldown > 0}
+                        onClick={send}
+                        className="w-full"
+                    >
+                        {cooldown > 0
+                            ? `${RESEND_LABEL} (${cooldown}s)`
+                            : RESEND_LABEL}
+                    </Button>
+                </div>
+            </FieldGroup>
         </form>
     );
 }

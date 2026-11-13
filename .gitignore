@@ -27,6 +27,7 @@
 .zed
 .*/skills
 docs
+scripts/data/
 
 # debug
 npm-debug.log*

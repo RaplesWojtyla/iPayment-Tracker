@@ -1,11 +1,15 @@
 "use client";
 
-import { authClient } from "@/lib/auth-client";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { AlertCircleIcon } from "lucide-react";
+import { authClient } from "@/lib/auth-client";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { Spinner } from "@/components/ui/spinner";
 
 export function LoginForm() {
-    const router = useRouter()
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState<string | null>(null);
@@ -21,7 +25,7 @@ export function LoginForm() {
             {
                 onSuccess(ctx) {
                     if (ctx.data?.twoFactorRedirect) return;
-                    router.replace("/")
+                    window.location.replace("/");
                 },
             },
         );
@@ -30,38 +34,51 @@ export function LoginForm() {
         if (error) {
             setError(error.message ?? "Gagal masuk.");
         }
-    }
+    };
 
     return (
-        <form onSubmit={onSubmit} className="flex flex-col gap-3">
-            <input
-                type="email"
-                name="email"
-                required
-                autoComplete="username"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="rounded border px-3 py-2"
-            />
-            <input
-                type="password"
-                name="password"
-                required
-                autoComplete="current-password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="rounded border px-3 py-2"
-            />
-            {error && <p className="text-sm text-red-600">{error}</p>}
-            <button
-                type="submit"
-                disabled={pending}
-                className="rounded bg-black px-3 py-2 text-white"
-            >
-                {pending ? "Memproses…" : "Masuk"}
-            </button>
+        <form onSubmit={onSubmit}>
+            <FieldGroup>
+                <Field>
+                    <FieldLabel htmlFor="login-email">Email</FieldLabel>
+                    <Input
+                        id="login-email"
+                        type="email"
+                        name="email"
+                        required
+                        autoComplete="username"
+                        placeholder="nama@perusahaan.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                    />
+                </Field>
+
+                <Field>
+                    <FieldLabel htmlFor="login-password">Password</FieldLabel>
+                    <Input
+                        id="login-password"
+                        type="password"
+                        name="password"
+                        required
+                        autoComplete="current-password"
+                        placeholder="Masukkan password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
+                </Field>
+
+                {error && (
+                    <Alert variant="destructive">
+                        <AlertCircleIcon />
+                        <AlertDescription>{error}</AlertDescription>
+                    </Alert>
+                )}
+
+                <Button type="submit" disabled={pending} className="w-full">
+                    {pending && <Spinner data-icon="inline-start" />}
+                    {pending ? "Memproses…" : "Masuk"}
+                </Button>
+            </FieldGroup>
         </form>
-    )
+    );
 }
